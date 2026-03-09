@@ -1,0 +1,1 @@
+cliphist list | wofi --dmenu --allow-images --pre-display-cmd "cliphist-wofi-img %s" | cliphist decode | wl-copy

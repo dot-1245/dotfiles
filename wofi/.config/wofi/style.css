@@ -1,0 +1,75 @@
+* {
+    font-family: "PlemolJPConsoleNF-ExtraLight", monospace;
+    font-size: 13px;
+}
+
+window {
+    background-color: #12131c;
+    border: 1px solid #908f9c;
+    border-radius: 8px;
+}
+
+#input {
+    background-color: #464651;
+    color: #e3e1ef;
+    border: none;
+    border-bottom: 2px solid #908f9c;
+    border-radius: 8px 8px 0 0;
+    padding: 10px 14px;
+    margin: 0;
+    outline: none;
+}
+
+#input:focus {
+    border-bottom: 2px solid #bfc2ff;
+}
+
+#inner-box,
+#outer-box,
+#scroll {
+    background-color: #12131c;
+}
+
+#outer-box {
+    padding: 6px;
+}
+
+#text {
+    color: #c7c5d3;
+    padding: 2px 8px;
+}
+
+#entry {
+    border-radius: 4px;
+    padding: 4px 6px;
+}
+
+#entry:selected {
+    background-color: #0200ef;
+}
+
+#entry:selected #text {
+    color: #e0e0ff;
+}
+
+#entry.child {
+    background-color: #12131c;
+    border-left: 2px solid #908f9c;
+    border-radius: 0;
+}
+
+#entry.child #text {
+    color: #c7c5d3;
+    font-size: 12px;
+}
+
+#entry.child {
+    background-color: #12131c;
+    border-left: 2px solid #908f9c;
+    border-radius: 0;
+}
+
+#entry.child #text {
+    color: #c7c5d3;
+    font-size: 12px;
+}
