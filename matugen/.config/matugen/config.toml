@@ -61,3 +61,7 @@ output_path = "~/.config/wlogout/colors.css"
 [templates.spicetify]
 input_path = "~/.config/matugen/templates/spicetify.ini"
 output_path = "~/.config/spicetify/Themes/marketplace/color.ini"
+
+[templates.quickshell]
+input_path = "~/.config/matugen/templates/quickshell.qml"
+output_path = "~/.config/quickshell/Colors.qml"
