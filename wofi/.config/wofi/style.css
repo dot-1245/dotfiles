@@ -4,16 +4,16 @@
 }
 
 window {
-    background-color: #121509;
-    border: 1px solid #909280;
+    background-color: #11131c;
+    border: 1px solid #90909c;
     border-radius: 8px;
 }
 
 #input {
-    background-color: #454839;
-    color: #e2e4d0;
+    background-color: #454651;
+    color: #e2e1ef;
     border: none;
-    border-bottom: 2px solid #909280;
+    border-bottom: 2px solid #90909c;
     border-radius: 8px 8px 0 0;
     padding: 10px 14px;
     margin: 0;
@@ -21,13 +21,13 @@ window {
 }
 
 #input:focus {
-    border-bottom: 2px solid #acd600;
+    border-bottom: 2px solid #bbc3ff;
 }
 
 #inner-box,
 #outer-box,
 #scroll {
-    background-color: #121509;
+    background-color: #11131c;
 }
 
 #outer-box {
@@ -35,7 +35,7 @@ window {
 }
 
 #text {
-    color: #c6c8b4;
+    color: #c6c5d3;
     padding: 2px 8px;
 }
 
@@ -45,31 +45,31 @@ window {
 }
 
 #entry:selected {
-    background-color: #3c4d00;
+    background-color: #002bcf;
 }
 
 #entry:selected #text {
-    color: #c4f400;
+    color: #dee0ff;
 }
 
 #entry.child {
-    background-color: #121509;
-    border-left: 2px solid #909280;
+    background-color: #11131c;
+    border-left: 2px solid #90909c;
     border-radius: 0;
 }
 
 #entry.child #text {
-    color: #c6c8b4;
+    color: #c6c5d3;
     font-size: 12px;
 }
 
 #entry.child {
-    background-color: #121509;
-    border-left: 2px solid #909280;
+    background-color: #11131c;
+    border-left: 2px solid #90909c;
     border-radius: 0;
 }
 
 #entry.child #text {
-    color: #c6c8b4;
+    color: #c6c5d3;
     font-size: 12px;
 }
