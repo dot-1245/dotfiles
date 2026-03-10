@@ -1,0 +1,32 @@
+window {
+    width: 90%;
+    height: 80%;
+    background-color: {{ colors.background.default.hex }};
+    border: 1px;
+    border-color: {{ colors.outline.default.hex }};
+    border-radius: 8px;
+}
+mainbox {
+    children: [listview];
+    background-color: {{ colors.background.default.hex }};
+}
+listview {
+    layout: vertical;
+    columns: 6;
+    lines: 3;
+    flow: horizontal;
+    fixed-columns: true;
+    fixed-lines: true;
+    background-color: {{ colors.background.default.hex }};
+}
+element {
+    orientation: vertical;
+    border-radius: 4px;
+    background-color: {{ colors.background.default.hex }};
+}
+element selected {
+    background-color: {{ colors.primary_container.default.hex }};
+}
+element-icon { size: 12em; }
+element-text { enabled: false; }
+inputbar { enabled: false; }

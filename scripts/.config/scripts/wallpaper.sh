@@ -8,7 +8,7 @@ mkdir -p "$THUMB_DIR"
 
 generate_entries() {
   {
-    find "$WALLPAPER_DIR" -maxdepth 1 -type f \
+    find -L "$WALLPAPER_DIR" -maxdepth 1 -type f \
       -iregex ".*\.\(jpg\|jpeg\|png\|gif\|bmp\|webp\)" \
       -printf "%T@ IMAGE %p\n"
     find "$VIDEO_DIR" -maxdepth 1 -type f \
