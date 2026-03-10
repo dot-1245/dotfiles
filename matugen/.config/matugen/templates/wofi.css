@@ -1,0 +1,75 @@
+* {
+    font-family: "PlemolJPConsoleNF-ExtraLight", monospace;
+    font-size: 13px;
+}
+
+window {
+    background-color: {{ colors.background.default.hex }};
+    border: 1px solid {{ colors.outline.default.hex }};
+    border-radius: 8px;
+}
+
+#input {
+    background-color: {{ colors.surface_variant.default.hex }};
+    color: {{ colors.on_background.default.hex }};
+    border: none;
+    border-bottom: 2px solid {{ colors.outline.default.hex }};
+    border-radius: 8px 8px 0 0;
+    padding: 10px 14px;
+    margin: 0;
+    outline: none;
+}
+
+#input:focus {
+    border-bottom: 2px solid {{ colors.primary.default.hex }};
+}
+
+#inner-box,
+#outer-box,
+#scroll {
+    background-color: {{ colors.background.default.hex }};
+}
+
+#outer-box {
+    padding: 6px;
+}
+
+#text {
+    color: {{ colors.on_surface_variant.default.hex }};
+    padding: 2px 8px;
+}
+
+#entry {
+    border-radius: 4px;
+    padding: 4px 6px;
+}
+
+#entry:selected {
+    background-color: {{ colors.primary_container.default.hex }};
+}
+
+#entry:selected #text {
+    color: {{ colors.on_primary_container.default.hex }};
+}
+
+#entry.child {
+    background-color: {{ colors.surface.default.hex }};
+    border-left: 2px solid {{ colors.outline.default.hex }};
+    border-radius: 0;
+}
+
+#entry.child #text {
+    color: {{ colors.on_surface_variant.default.hex }};
+    font-size: 12px;
+}
+
+#entry.child {
+    background-color: {{ colors.surface.default.hex }};
+    border-left: 2px solid {{ colors.outline.default.hex }};
+    border-radius: 0;
+}
+
+#entry.child #text {
+    color: {{ colors.on_surface_variant.default.hex }};
+    font-size: 12px;
+}
