@@ -78,7 +78,7 @@ apply_matugen() {
 
     kill -USR1 $(pidof kitty) 2>/dev/null
     kill -SIGUSR1 $(pidof cava) 2>/dev/null
-    source /home/dot1245/dotfiles/zsh/.config/zsh/.zshrc
+    # source /home/dot1245/dotfiles/zsh/.config/zsh/.zshrc
 }
 
 echo "👀 mpvpaper監視開始..."
