@@ -44,4 +44,4 @@ alias daily="yap --editor inbuilt /mnt/hdd/daily"
 
 eval "$(starship init zsh)"
 
-fastfetch --config arch
+fastfetch --config os
