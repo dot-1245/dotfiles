@@ -1,0 +1,210 @@
+@import "colors.css";
+
+* {
+    font-family: "PlemolJPConsoleNF-ExtraLight", monospace;
+    font-size: 12px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+}
+
+window#waybar {
+    background: transparent;
+    color: @on_background;
+}
+
+window#waybar > box {
+    background: alpha(@background, 0.85);
+    border-bottom: 1px solid alpha(@outline, 0.3);
+}
+
+/* ===== ワークスペース ===== */
+#workspaces {
+    margin: 0 4px;
+}
+
+#workspaces button {
+    padding: 0 6px;
+    color: @on_surface_variant;
+    background: transparent;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+#workspaces button:hover {
+    background: alpha(@surface_variant, 0.5);
+    color: @on_background;
+}
+
+#workspaces button.active {
+    color: @primary;
+    border-bottom: 2px solid @primary;
+}
+
+#workspaces button.urgent {
+    color: @error;
+    border-bottom: 2px solid @error;
+}
+
+/* ===== 共通モジュール ===== */
+#custom-user,
+#custom-playerpos,
+#custom-music,
+#custom-fcitx5,
+#window,
+#clock,
+#cpu,
+#memory,
+#temperature,
+#network,
+#pulseaudio,
+#backlight,
+#battery,
+#power-profiles-daemon,
+#idle-inhibitor,
+#tray,
+#custom-power,
+#mpd,
+#keyboard-state {
+    padding: 0 8px;
+    color: @on_surface_variant;
+}
+
+/* ===== ウィンドウタイトル ===== */
+#window {
+    color: alpha(@on_background, 0.6);
+    font-style: italic;
+}
+
+/* ===== 時計 ===== */
+#clock {
+    color: @primary;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+/* ===== ユーザー ===== */
+#custom-user {
+    color: @secondary;
+}
+
+/* ===== プレイヤー ===== */
+#custom-playerpos {
+    color: @tertiary;
+}
+
+/* ===== ネットワーク ===== */
+#network {
+    color: @on_surface_variant;
+}
+
+#network.disconnected {
+    color: @error;
+}
+
+/* ===== オーディオ ===== */
+#pulseaudio {
+    color: @on_surface_variant;
+}
+
+#pulseaudio.muted {
+    color: alpha(@on_surface_variant, 0.4);
+}
+
+/* ===== CPU / メモリ / 温度 ===== */
+#cpu {
+    color: @on_surface_variant;
+}
+
+#memory {
+    color: @on_surface_variant;
+}
+
+#temperature {
+    color: @on_surface_variant;
+}
+
+#temperature.critical {
+    color: @error;
+}
+
+/* ===== バックライト ===== */
+#backlight {
+    color: @on_surface_variant;
+}
+
+/* ===== バッテリー ===== */
+#battery {
+    color: @on_surface_variant;
+}
+
+#battery.warning {
+    color: @secondary;
+}
+
+#battery.critical {
+    color: @error;
+}
+
+#battery.charging {
+    color: @tertiary;
+}
+
+/* ===== 電力プロファイル ===== */
+#power-profiles-daemon {
+    color: @on_surface_variant;
+}
+
+#power-profiles-daemon.performance {
+    color: @error;
+}
+
+#power-profiles-daemon.power-saver {
+    color: @tertiary;
+}
+
+/* ===== アイドル抑制 ===== */
+#idle-inhibitor.activated {
+    color: @primary;
+}
+
+/* ===== トレイ ===== */
+#tray {
+    margin-left: 4px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background: alpha(@error, 0.2);
+}
+
+/* ===== 電源ボタン ===== */
+#custom-power {
+    color: @error;
+    margin-right: 4px;
+    font-size: 14px;
+}
+
+#custom-power:hover {
+    color: @on_primary;
+    background: alpha(@error, 0.3);
+}
+
+/* ===== fcitx5 ===== */
+#custom-fcitx5 {
+    color: @primary;
+    font-size: 11px;
+    padding: 0 6px;
+}
+
+/* ===== tooltip ===== */
+tooltip {
+    background: @surface;
+    border: 1px solid alpha(@outline, 0.4);
+    color: @on_surface;
+    border-radius: 4px;
+}
