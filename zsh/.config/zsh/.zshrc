@@ -27,6 +27,7 @@ export agsstyle="$HOME/.config/ags/style.scss"
 export agswidget="$HOME/.config/ags/widget"
 export mpvconf="$HOME/.config/mpv/mpv.conf"
 export mpvinput="$HOME/.config/mpv/input.conf"
+export quickshellconf="$HOME/.config/quickshell/"
 
 export PATH="$HOME/.local/bin:$PATH"
 
