@@ -39,6 +39,7 @@ alias cbonsaitui="cbonsai -lit 0.01"
 alias sptui="sh $HOME/.config/scripts/spotify-tui.sh"
 alias yttui="sh $HOME/.config/scripts/yttui.sh"
 alias daily="yap --editor inbuilt /mnt/hdd/daily"
+alias blackpaper="swww clear 000000"
 
 eval "$(starship init zsh)"
 
