@@ -28,7 +28,6 @@ export agswidget="$HOME/.config/ags/widget"
 export mpvconf="$HOME/.config/mpv/mpv.conf"
 export mpvinput="$HOME/.config/mpv/input.conf"
 export quickshellconf="$HOME/.config/quickshell/"
-
 export PATH="$HOME/.local/bin:$PATH"
 
 alias dotman="~/.config/scripts/dotman.sh"
@@ -41,6 +40,7 @@ alias sptui="sh $HOME/.config/scripts/spotify-tui.sh"
 alias yttui="sh $HOME/.config/scripts/yttui.sh"
 alias daily="yap --editor inbuilt /mnt/hdd/daily"
 alias blackpaper="swww clear 000000"
+alias requickshell="killall quickshell 2>/dev/null; quickshell & disown"
 
 eval "$(starship init zsh)"
 

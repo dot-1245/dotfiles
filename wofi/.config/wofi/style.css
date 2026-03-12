@@ -4,16 +4,16 @@
 }
 
 window {
-    background-color: #131313;
-    border: 1px solid #919191;
+    background-color: #141407;
+    border: 1px solid #94917d;
     border-radius: 8px;
 }
 
 #input {
-    background-color: #474747;
-    color: #e2e2e2;
+    background-color: #494737;
+    color: #e7e3cc;
     border: none;
-    border-bottom: 2px solid #919191;
+    border-bottom: 2px solid #94917d;
     border-radius: 8px 8px 0 0;
     padding: 10px 14px;
     margin: 0;
@@ -21,13 +21,13 @@ window {
 }
 
 #input:focus {
-    border-bottom: 2px solid #ffffff;
+    border-bottom: 2px solid #d1cc00;
 }
 
 #inner-box,
 #outer-box,
 #scroll {
-    background-color: #131313;
+    background-color: #141407;
 }
 
 #outer-box {
@@ -35,7 +35,7 @@ window {
 }
 
 #text {
-    color: #c6c6c6;
+    color: #cac7b1;
     padding: 2px 8px;
 }
 
@@ -45,31 +45,31 @@ window {
 }
 
 #entry:selected {
-    background-color: #d4d4d4;
+    background-color: #4b4900;
 }
 
 #entry:selected #text {
-    color: #000000;
+    color: #efe800;
 }
 
 #entry.child {
-    background-color: #131313;
-    border-left: 2px solid #919191;
+    background-color: #141407;
+    border-left: 2px solid #94917d;
     border-radius: 0;
 }
 
 #entry.child #text {
-    color: #c6c6c6;
+    color: #cac7b1;
     font-size: 12px;
 }
 
 #entry.child {
-    background-color: #131313;
-    border-left: 2px solid #919191;
+    background-color: #141407;
+    border-left: 2px solid #94917d;
     border-radius: 0;
 }
 
 #entry.child #text {
-    color: #c6c6c6;
+    color: #cac7b1;
     font-size: 12px;
 }
