@@ -21,27 +21,27 @@ export makoconf="$HOME/.config/mako/config"
 export woficonf="$HOME/.config/wofi/config"
 export woficss="$HOME/.config/wofi/style.css"
 export fuzzelconf="$HOME/.config/fuzzel/fuzzel.ini"
-export starshipconf="$HOME/.config/starship.toml"
 export matugenconf="$HOME/.config/matugen/config.toml"
 export agsconf="$HOME/.config/ags/app.ts"
 export agsstyle="$HOME/.config/ags/style.scss"
 export agswidget="$HOME/.config/ags/widget"
 export mpvconf="$HOME/.config/mpv/mpv.conf"
 export mpvinput="$HOME/.config/mpv/input.conf"
-export starshipconf="$HOME/.config/starship.toml"
-
+export quickshellconf="$HOME/.config/quickshell/"
 export PATH="$HOME/.local/bin:$PATH"
 
 alias dotman="~/.config/scripts/dotman.sh"
 alias rekitty="source $zshconf"
 alias rewaybar="killall waybar 2>/dev/null; waybar > /dev/null 2>&1 & disown"
-alias musictui="/home/dot1245/.config/scripts/show_music.sh"
+alias musictui="~/.config/scripts/show_music.sh"
 alias clocktui="tty-clock -sc"
 alias cbonsaitui="cbonsai -lit 0.01"
 alias sptui="sh $HOME/.config/scripts/spotify-tui.sh"
 alias yttui="sh $HOME/.config/scripts/yttui.sh"
 alias daily="yap --editor inbuilt /mnt/hdd/daily"
+alias blackpaper="swww clear 000000"
+alias requickshell="killall quickshell 2>/dev/null; quickshell & disown"
 
 eval "$(starship init zsh)"
 
-fastfetch --config arch
+fastfetch --config os
