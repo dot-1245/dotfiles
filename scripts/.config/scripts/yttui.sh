@@ -12,6 +12,9 @@ THUMB_CACHE="$CACHE_DIR/thumbs"
 
 mkdir -p "$CACHE_DIR" "$THUMB_CACHE"
 
+# yt-dlp共通オプション
+YTDL_OPTS="cookies-from-browser=firefox,remote-components=ejs:github"
+
 # =====================
 # プレイリスト一覧 (CSVファイル名から)
 # =====================
@@ -30,10 +33,8 @@ get_playlists() {
 get_tracks() {
     local csv="$1"
     tail -n +2 "$csv" | while IFS=, read -r uri name album artists rest; do
-        # クォート除去
         name="${name//\"/}"
         artists="${artists//\"/}"
-        # セミコロン区切りの複数アーティストは最初だけ
         artist="${artists%%;*}"
         echo -e "${name} - ${artist}"
     done
@@ -76,7 +77,12 @@ play_track() {
     echo "🔍 YouTube候補を検索中... ($track_info)"
 
     local raw_candidates
-    raw_candidates=$(yt-dlp --cookies-from-browser firefox "ytsearch5:${track_info}" --flat-playlist --print "%(id)s###%(title)s###%(duration)s" --no-warnings 2>/dev/null)
+    raw_candidates=$(yt-dlp \
+        --cookies-from-browser firefox \
+        "ytsearch5:${track_info}" \
+        --flat-playlist \
+        --print "%(id)s###%(title)s###%(duration)s" \
+        --no-warnings 2>/dev/null)
 
     if [[ -z "$raw_candidates" ]]; then
         echo "❌ 候補が見つからなかった" >&2
@@ -131,34 +137,33 @@ play_track() {
     case "$play_mode" in
         "🎵 音声のみ")
             mpv --no-video \
-                --ytdl-raw-options="cookies-from-browser=firefox,format=251" \
+                --ytdl-raw-options="${YTDL_OPTS},format=251" \
                 "$selected"
             ;;
         "🎬 MV(映像あり)")
-            mpv --ytdl-raw-options="cookies-from-browser=firefox" \
+            mpv --ytdl-raw-options="${YTDL_OPTS}" \
                 "$selected"
             ;;
         "📝 音声+字幕")
             mpv --no-video \
-                --ytdl-raw-options="cookies-from-browser=firefox,format=251" \
+                --ytdl-raw-options="${YTDL_OPTS},format=251" \
                 --sub-auto=all --slang=ja,en \
                 "$selected"
             ;;
         "🎬📝 MV+字幕")
-            mpv --ytdl-raw-options="cookies-from-browser=firefox" \
+            mpv --ytdl-raw-options="${YTDL_OPTS}" \
                 --sub-auto=all --slang=ja,en \
                 "$selected"
             ;;
         "🖥️  壁紙 動画")
-            mpvpaper \* "$selected" -- \
-                --ytdl-raw-options="cookies-from-browser=firefox" \
-                --loop=inf
+            mpvpaper \* \
+                -o "--ytdl-raw-options=${YTDL_OPTS} --loop" \
+                "$selected"
             ;;
         "🖥️📝 壁紙 動画+字幕")
-            mpvpaper \* "$selected" -- \
-                --ytdl-raw-options="cookies-from-browser=firefox" \
-                --sub-auto=all --slang=ja,en \
-                --loop=inf
+            mpvpaper \* \
+                -o "--ytdl-raw-options=${YTDL_OPTS} --loop --sub-auto=all --slang=ja,en" \
+                "$selected"
             ;;
         *)
             return 1
