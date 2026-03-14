@@ -53,122 +53,127 @@ ShellRoot {
         }
     }
 
-    PanelWindow {
-        id: panel
-        anchors.top: true
-        implicitWidth: screen.width * 0.99
-        implicitHeight: 36
-        color: "transparent"
-        margins.top: 8
+    Variants {
+        model: Quickshell.screens
 
-        MusicPopup {
-            id: musicPopup
-            visible: false
-            parentWindow: panel
-        }
+        delegate: PanelWindow {
+            id: panel
+            required property var modelData
+            screen: modelData
+            anchors.top: true
+            implicitWidth: screen.width * 0.99
+            implicitHeight: 36
+            color: "transparent"
+            margins.top: 8
 
-        PowerMenu {
-            id: powerPopup
-            visible: false
-            parentWindow: panel
-        }
+            MusicPopup {
+                id: musicPopup
+                visible: false
+                parentWindow: panel
+            }
 
-        Rectangle {
-            id: bar
-            anchors.fill: parent
-            radius: 999
-            color: Qt.rgba(
-                Colors.surface.r,
-                Colors.surface.g,
-                Colors.surface.b,
-                0.85
-            )
+            PowerMenu {
+                id: powerPopup
+                visible: false
+                parentWindow: panel
+            }
 
-            Item {
+            Rectangle {
+                id: bar
                 anchors.fill: parent
-                anchors.leftMargin: 12
-                anchors.rightMargin: 12
+                radius: 999
+                color: Qt.rgba(
+                    Colors.surface.r,
+                    Colors.surface.g,
+                    Colors.surface.b,
+                    0.85
+                )
 
-                // 左: ワークスペース
-                Row {
-                    anchors.left: parent.left
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 4
+                Item {
+                    anchors.fill: parent
+                    anchors.leftMargin: 12
+                    anchors.rightMargin: 12
 
-                    Repeater {
-                        model: Hyprland.workspaces
-                        Rectangle {
-                            id: wsRect
-                            implicitWidth: 24
-                            implicitHeight: 24
-                            radius: 999
-                            color: urgentWorkspaces.includes(modelData.id)
-                                ? Colors.errorColor
-                                : modelData.id === Hyprland.focusedWorkspace?.id
-                                    ? Colors.primary
-                                    : Colors.surface
+                    // 左: ワークスペース
+                    Row {
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: 4
 
-                            Text {
-                                anchors.centerIn: parent
-                                text: modelData.id
-                                color: textColor(wsRect.color)
-                                font.pixelSize: 12
-                            }
+                        Repeater {
+                            model: Hyprland.workspaces
+                            Rectangle {
+                                id: wsRect
+                                implicitWidth: 24
+                                implicitHeight: 24
+                                radius: 999
+                                color: urgentWorkspaces.includes(modelData.id)
+                                    ? Colors.errorColor
+                                    : modelData.id === Hyprland.focusedWorkspace?.id
+                                        ? Colors.primary
+                                        : Colors.surface
 
-                            MouseArea {
-                                anchors.fill: parent
-                                onClicked: modelData.activate()
-                            }
-                        }
-                    }
-                }
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: modelData.id
+                                    color: textColor(wsRect.color)
+                                    font.pixelSize: 12
+                                }
 
-                // 中央: ウィンドウタイトル
-                Text {
-                    anchors.centerIn: parent
-                    width: parent.width * 0.4
-                    text: windowTitle
-                    color: textColor(bar.color)
-                    font.pixelSize: 13
-                    elide: Text.ElideRight
-                    horizontalAlignment: Text.AlignHCenter
-                }
-
-                // 右: 音楽 + 時計 + 電源
-                Row {
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 12
-
-                    Repeater {
-                        model: Mpris.players
-                        Text {
-                            text: "🎵 " + modelData.trackTitle
-                            color: textColor(bar.color)
-                            font.pixelSize: 13
-                            MouseArea {
-                                anchors.fill: parent
-                                onClicked: musicPopup.visible = !musicPopup.visible
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: modelData.activate()
+                                }
                             }
                         }
                     }
 
+                    // 中央: ウィンドウタイトル
                     Text {
-                        text: Qt.formatDateTime(new Date(), "hh:mm")
+                        anchors.centerIn: parent
+                        width: parent.width * 0.4
+                        text: windowTitle
                         color: textColor(bar.color)
                         font.pixelSize: 13
+                        elide: Text.ElideRight
+                        horizontalAlignment: Text.AlignHCenter
                     }
 
-                    // 電源ボタン
-                    Text {
-                        text: "⏻"
-                        color: textColor(bar.color)
-                        font.pixelSize: 16
-                        MouseArea {
-                            anchors.fill: parent
-                            anchors.margins: -8
-                            onClicked: powerMenu.shown = !powerMenu.shown
+                    // 右: 音楽 + 時計 + 電源
+                    Row {
+                        anchors.right: parent.right
+                        anchors.verticalCenter: parent.verticalCenter
+                        spacing: 12
 
+                        Repeater {
+                            model: Mpris.players
+                            Text {
+                                text: "🎵 " + modelData.trackTitle
+                                color: textColor(bar.color)
+                                font.pixelSize: 13
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: musicPopup.visible = !musicPopup.visible
+                                }
+                            }
+                        }
+
+                        Text {
+                            text: Qt.formatDateTime(new Date(), "hh:mm")
+                            color: textColor(bar.color)
+                            font.pixelSize: 13
+                        }
+
+                        // 電源ボタン
+                        Text {
+                            text: "⏻"
+                            color: textColor(bar.color)
+                            font.pixelSize: 16
+                            MouseArea {
+                                anchors.fill: parent
+                                anchors.margins: -8
+                                onClicked: powerPopup.visible = !powerPopup.visible
+                            }
                         }
                     }
                 }
