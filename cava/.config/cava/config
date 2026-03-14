@@ -1,10 +1,10 @@
 [color]
 gradient = 1
-gradient_color_1 = '#ceca75'
-gradient_color_2 = '#4b4900'
-gradient_color_3 = '#cbc8a4'
-gradient_color_4 = '#49482c'
-gradient_color_5 = '#a5d0bb'
-gradient_color_6 = '#264e3e'
-gradient_color_7 = '#ebe68e'
-gradient_color_8 = '#e6e2d5'
+gradient_color_1 = '#c2d000'
+gradient_color_2 = '#454b00'
+gradient_color_3 = '#bdcd9c'
+gradient_color_4 = '#3e4b26'
+gradient_color_5 = '#abd19a'
+gradient_color_6 = '#2f4e24'
+gradient_color_7 = '#deed00'
+gradient_color_8 = '#e5e4ce'

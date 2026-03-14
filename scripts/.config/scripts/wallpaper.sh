@@ -49,7 +49,7 @@ if [[ "$SELECTED" == Video/* ]]; then
 else
   pkill mpvpaper 2>/dev/null
   swww img "$FULL_PATH" --transition-type fade
-  matugen image "$FULL_PATH"
+  matugen image "$FULL_PATH" --source-color-index 0
   BG_COLOR=$(grep '^\$background' "$COLORS_CONF" | grep -oP '[0-9a-fA-F]{6}' | head -c 6)
   kill -USR1 $(pidof kitty) 2>/dev/null
   kill -SIGUSR1 $(pidof cava) 2>/dev/null
