@@ -4,16 +4,16 @@
 }
 
 window {
-    background-color: #161306;
-    border: 1px solid #97917c;
+    background-color: #1c1108;
+    border: 1px solid #a18d7f;
     border-radius: 8px;
 }
 
 #input {
-    background-color: #4b4736;
-    color: #eae2cb;
+    background-color: #544438;
+    color: #f7dece;
     border: none;
-    border-bottom: 2px solid #97917c;
+    border-bottom: 2px solid #a18d7f;
     border-radius: 8px 8px 0 0;
     padding: 10px 14px;
     margin: 0;
@@ -21,13 +21,13 @@ window {
 }
 
 #input:focus {
-    border-bottom: 2px solid #e2c600;
+    border-bottom: 2px solid #ffb77f;
 }
 
 #inner-box,
 #outer-box,
 #scroll {
-    background-color: #161306;
+    background-color: #1c1108;
 }
 
 #outer-box {
@@ -35,7 +35,7 @@ window {
 }
 
 #text {
-    color: #cdc6b0;
+    color: #d9c2b3;
     padding: 2px 8px;
 }
 
@@ -45,31 +45,31 @@ window {
 }
 
 #entry:selected {
-    background-color: #524700;
+    background-color: #6e3900;
 }
 
 #entry:selected #text {
-    color: #ffe33e;
+    color: #ffdcc3;
 }
 
 #entry.child {
-    background-color: #161306;
-    border-left: 2px solid #97917c;
+    background-color: #1c1108;
+    border-left: 2px solid #a18d7f;
     border-radius: 0;
 }
 
 #entry.child #text {
-    color: #cdc6b0;
+    color: #d9c2b3;
     font-size: 12px;
 }
 
 #entry.child {
-    background-color: #161306;
-    border-left: 2px solid #97917c;
+    background-color: #1c1108;
+    border-left: 2px solid #a18d7f;
     border-radius: 0;
 }
 
 #entry.child #text {
-    color: #cdc6b0;
+    color: #d9c2b3;
     font-size: 12px;
 }
