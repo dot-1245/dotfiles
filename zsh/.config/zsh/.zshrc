@@ -41,6 +41,9 @@ alias yttui="sh $HOME/.config/scripts/yttui.sh"
 alias daily="yap --editor inbuilt /mnt/hdd/daily"
 alias blackpaper="swww clear 000000"
 alias requickshell="killall quickshell 2>/dev/null; quickshell & disown"
+alias mpvmatugen="$HOME/.config/scripts/matugen-mpvpaper.sh >/dev/null 2>&1 & disown"
+alias ff="fastfetch -c os"
+alias matugencolors='~/.config/scripts/show-colors.sh'
 
 eval "$(starship init zsh)"
 

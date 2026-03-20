@@ -65,3 +65,11 @@ output_path = "~/.config/spicetify/Themes/marketplace/color.ini"
 [templates.quickshell]
 input_path = "~/.config/matugen/templates/quickshell.qml"
 output_path = "~/.config/quickshell/Colors.qml"
+
+[templates.qt6ct]
+input_path = '~/.config/matugen/templates/qtct-colors.conf'
+output_path = '~/.config/qt6ct/colors/matugen.conf'
+
+[templates.colors_cache]
+input_path = '~/.config/matugen/templates/colors.txt'
+output_path = '~/matugen-colors.txt'
