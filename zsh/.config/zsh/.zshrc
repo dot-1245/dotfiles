@@ -44,7 +44,8 @@ alias requickshell="killall quickshell 2>/dev/null; quickshell & disown"
 alias mpvmatugen="$HOME/.config/scripts/matugen-mpvpaper.sh >/dev/null 2>&1 & disown"
 alias ff="fastfetch -c os"
 alias matugencolors='~/.config/scripts/show-colors.sh'
-
+alias blackcolors='matugen color hex ffffff -t scheme-monochrome'
+alias cl='clear'
 eval "$(starship init zsh)"
 
 fastfetch --config os

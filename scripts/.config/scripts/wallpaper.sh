@@ -34,6 +34,24 @@ SELECTED=$(generate_entries | rofi -dmenu -show-icons -theme ~/.config/rofi/wall
 
 FULL_PATH="$WALLPAPER_DIR/$SELECTED"
 
+# --- 移植セクション: モノクロ判定ロジック ---
+# 判定対象の画像パスを特定（動画ならサムネイル、画像ならそのまま）
+CHECK_TARGET="$FULL_PATH"
+if [[ "$SELECTED" == Video/* ]]; then
+    CHECK_TARGET="$THUMB_DIR/$(basename "$SELECTED").jpg"
+fi
+
+# 彩度の平均を取得してスキームを決定
+SATURATION=$(convert "$CHECK_TARGET" -colorspace HSL -channel S -separate -format "%[fx:mean]" info: 2>/dev/null)
+SCHEME="scheme-vibrant"
+if awk "BEGIN {exit !($SATURATION < 0.15)}"; then
+    echo "🖤 モノクロ検出: scheme-monochrome"
+    SCHEME="scheme-monochrome"
+fi
+# matugen適用
+matugen image "$CHECK_TARGET" --type "$SCHEME" --source-color-index 0
+# ------------------------------------------
+
 # matugenの背景色を取得（なければ黒）
 if [[ -f "$COLORS_CONF" ]]; then
     BG_COLOR=$(grep '^\$background' "$COLORS_CONF" | grep -oP '[0-9a-fA-F]{6}' | head -c 6)
@@ -49,20 +67,15 @@ if [[ "$SELECTED" == Video/* ]]; then
 else
   pkill mpvpaper 2>/dev/null
   swww img "$FULL_PATH" --transition-type fade
-  matugen image "$FULL_PATH" --source-color-index 0
-  BG_COLOR=$(grep '^\$background' "$COLORS_CONF" | grep -oP '[0-9a-fA-F]{6}' | head -c 6)
-  kill -USR1 $(pidof kitty) 2>/dev/null
-  kill -SIGUSR1 $(pidof cava) 2>/dev/null
-  killall -SIGUSR2 waybar 2>/dev/null
 fi
 
+# 設定の反映
 if [[ -f "$HYPRLOCK_CONF" ]]; then
   sed -i "s|path = .*|path = $FULL_PATH|" "$HYPRLOCK_CONF"
 fi
 
+sleep 0.5
 hyprctl reload
-swaync-client --reload-config 2>/dev/null
-pkill -USR1 kitty 2>/dev/null
-pkill -SIGUSR1 cava 2>/dev/null
-spicetify apply
-
+killall -SIGUSR1 kitty 
+killall -SIGUSR1 cava 
+# spicetify apply
