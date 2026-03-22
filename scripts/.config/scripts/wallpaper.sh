@@ -62,3 +62,7 @@ fi
 
 hyprctl reload
 swaync-client --reload-config 2>/dev/null
+pkill -USR1 kitty 2>/dev/null
+pkill -SIGUSR1 cava 2>/dev/null
+spicetify apply
+

@@ -7,7 +7,7 @@ PopupWindow {
     id: popup
     visible: false
     implicitWidth: 400
-    implicitHeight: 160
+    implicitHeight: 168
     color: "transparent"
 
     required property var parentWindow
@@ -15,24 +15,41 @@ PopupWindow {
     anchor.rect.x: parentWindow.width - 420
     anchor.rect.y: parentWindow.height + 4
 
-    property var activePlayer: null
+    property var playerList: []
+    property int activeIndex: 0
+    property var activePlayer: playerList.length > 0 ? playerList[activeIndex] : null
 
     Repeater {
         model: Mpris.players
+
         Item {
+            required property var modelData
+            required property int index
+
             Component.onCompleted: {
+                const list = [...popup.playerList]
+                list.push(modelData)
+                popup.playerList = list
+
                 if (modelData.playbackState === MprisPlaybackState.Playing) {
-                    popup.activePlayer = modelData
-                } else if (popup.activePlayer === null ||
-                           popup.activePlayer.playbackState !== MprisPlaybackState.Playing) {
-                    popup.activePlayer = modelData
+                    popup.activeIndex = list.length - 1
                 }
             }
+
+            Component.onDestruction: {
+                const list = popup.playerList.filter(p => p !== modelData)
+                popup.playerList = list
+                if (popup.activeIndex >= list.length) {
+                    popup.activeIndex = Math.max(0, list.length - 1)
+                }
+            }
+
             Connections {
                 target: modelData
                 function onPlaybackStateChanged() {
                     if (modelData.playbackState === MprisPlaybackState.Playing) {
-                        popup.activePlayer = modelData
+                        const idx = popup.playerList.indexOf(modelData)
+                        if (idx !== -1) popup.activeIndex = idx
                     }
                 }
             }
@@ -41,7 +58,16 @@ PopupWindow {
 
     Rectangle {
         anchors.fill: parent
-        radius: 24
+        anchors.margins: -1
+        radius: 28
+        color: Qt.rgba(0, 0, 0, 0.3)
+        z: -1
+    }
+
+    Rectangle {
+        id: card
+        anchors.fill: parent
+        radius: 28
         color: Colors.surface
 
         Image {
@@ -49,144 +75,237 @@ PopupWindow {
             source: popup.activePlayer?.trackArtUrl ?? ""
             fillMode: Image.PreserveAspectCrop
             visible: source !== ""
-            opacity: 0.6
-        }
-
-        Rectangle {
-            anchors.fill: parent
-            color: Qt.rgba(0, 0, 0, 0.4)
-            radius: 24
-        }
-
-        Text {
-            anchors.centerIn: parent
-            text: "再生なし"
-            color: "white"
-            font.pixelSize: 16
-            visible: popup.activePlayer === null
+            opacity: 0.15
         }
 
         Item {
             anchors.fill: parent
-            anchors.margins: 16
-            visible: popup.activePlayer !== null
 
-            // 右上: 再生/一時停止ボタン
-            Rectangle {
-                anchors.right: parent.right
-                anchors.top: parent.top
-                width: 40
-                height: 40
-                radius: 999
-                color: Qt.rgba(1, 1, 1, 0.2)
-                z: 1
-
-                Text {
-                    anchors.centerIn: parent
-                    text: popup.activePlayer?.playbackState === MprisPlaybackState.Playing ? "⏸" : "▶"
-                    color: "white"
-                    font.pixelSize: 20
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    z: 1
-                    onClicked: popup.activePlayer?.togglePlaying()
-                }
+            Text {
+                anchors.centerIn: parent
+                text: "再生なし"
+                color: Qt.rgba(Colors.surfaceText.r, Colors.surfaceText.g, Colors.surfaceText.b, 0.5)
+                font.pixelSize: 14
+                visible: popup.activePlayer === null
             }
 
-            // 曲名・アーティスト
-            Column {
-                anchors.left: parent.left
-                anchors.top: parent.top
-                anchors.right: parent.right
-                anchors.rightMargin: 56
-                anchors.bottom: bottomRow.top
-                anchors.bottomMargin: 8
-                spacing: 4
-
-                Text {
-                    width: parent.width
-                    text: popup.activePlayer?.trackTitle || ""
-                    color: "white"
-                    font.pixelSize: 16
-                    font.bold: true
-                    elide: Text.ElideRight
-                }
-
-                Text {
-                    width: parent.width
-                    text: popup.activePlayer?.trackArtists || ""
-                    color: Qt.rgba(1, 1, 1, 0.8)
-                    font.pixelSize: 13
-                    elide: Text.ElideRight
-                }
-            }
-
-            // 下部: ⏮ [プログレスバー] ⏭
             Item {
-                id: bottomRow
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                height: 24
+                anchors.fill: parent
+                anchors.margins: 16
+                visible: popup.activePlayer !== null
 
                 Text {
-                    id: prevBtn
+                    id: leftArrow
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
-                    text: "⏮"
-                    color: "white"
-                    font.pixelSize: 18
+                    text: "‹"
+                    color: popup.playerList.length > 1 ? Colors.surfaceText : "transparent"
+                    font.pixelSize: 24
                     MouseArea {
                         anchors.fill: parent
                         anchors.margins: -8
-                        onClicked: popup.activePlayer?.previous()
+                        enabled: popup.playerList.length > 1
+                        onClicked: popup.activeIndex = (popup.activeIndex - 1 + popup.playerList.length) % popup.playerList.length
+                    }
+                }
+
+                Text {
+                    id: rightArrow
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "›"
+                    color: popup.playerList.length > 1 ? Colors.surfaceText : "transparent"
+                    font.pixelSize: 24
+                    MouseArea {
+                        anchors.fill: parent
+                        anchors.margins: -8
+                        enabled: popup.playerList.length > 1
+                        onClicked: popup.activeIndex = (popup.activeIndex + 1) % popup.playerList.length
                     }
                 }
 
                 Rectangle {
-                    anchors.left: prevBtn.right
+                    id: thumbContainer
+                    anchors.left: leftArrow.right
                     anchors.leftMargin: 8
-                    anchors.right: nextBtn.left
-                    anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
-                    height: 4
-                    radius: 999
-                    color: Qt.rgba(1, 1, 1, 0.3)
+                    width: 80
+                    height: 80
+                    radius: 12
+                    color: Qt.rgba(Colors.primary.r, Colors.primary.g, Colors.primary.b, 0.2)
+                    clip: true
 
-                    Rectangle {
-                        width: parent.width * (
-                            popup.activePlayer?.position && popup.activePlayer?.length
-                            ? popup.activePlayer.position / popup.activePlayer.length
-                            : 0
-                        )
-                        height: parent.height
-                        radius: 999
-                        color: "white"
+                    Image {
+                        id: thumbImage
+                        anchors.fill: parent
+                        source: popup.activePlayer?.trackArtUrl ?? ""
+                        fillMode: Image.PreserveAspectCrop
+                        visible: source !== ""
                     }
 
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: mouse => {
-                            if (popup.activePlayer?.canSeek) {
-                                popup.activePlayer.position = (mouse.x / width) * popup.activePlayer.length
-                            }
-                        }
+                    Text {
+                        anchors.centerIn: parent
+                        text: "♪"
+                        color: Colors.primary
+                        font.pixelSize: 28
+                        visible: !thumbImage.visible
                     }
                 }
 
-                Text {
-                    id: nextBtn
-                    anchors.right: parent.right
+                Column {
+                    anchors.left: thumbContainer.right
+                    anchors.leftMargin: 12
+                    anchors.right: rightArrow.left
+                    anchors.rightMargin: 8
                     anchors.verticalCenter: parent.verticalCenter
-                    text: "⏭"
-                    color: "white"
-                    font.pixelSize: 18
-                    MouseArea {
-                        anchors.fill: parent
-                        anchors.margins: -8
-                        onClicked: popup.activePlayer?.next()
+                    spacing: 6
+
+                    Text {
+                        width: parent.width
+                        text: popup.activePlayer?.identity ?? ""
+                        color: Qt.rgba(Colors.primary.r, Colors.primary.g, Colors.primary.b, 0.9)
+                        font.pixelSize: 10
+                        font.weight: Font.Medium
+                        elide: Text.ElideRight
+                        visible: popup.playerList.length > 1
+                    }
+
+                    Text {
+                        width: parent.width
+                        text: popup.activePlayer?.trackTitle || ""
+                        color: Colors.surfaceText
+                        font.pixelSize: 14
+                        font.weight: Font.DemiBold
+                        elide: Text.ElideRight
+                    }
+
+                    Text {
+                        width: parent.width
+                        text: popup.activePlayer?.trackArtists || ""
+                        color: Qt.rgba(Colors.surfaceText.r, Colors.surfaceText.g, Colors.surfaceText.b, 0.7)
+                        font.pixelSize: 12
+                        elide: Text.ElideRight
+                    }
+
+                    Rectangle {
+                        width: parent.width
+                        height: 3
+                        radius: 999
+                        color: Qt.rgba(Colors.surfaceText.r, Colors.surfaceText.g, Colors.surfaceText.b, 0.2)
+
+                        Rectangle {
+                            width: parent.width * (
+                                popup.activePlayer?.position && popup.activePlayer?.length
+                                ? popup.activePlayer.position / popup.activePlayer.length
+                                : 0
+                            )
+                            height: parent.height
+                            radius: 999
+                            color: Colors.primary
+                            Behavior on width { NumberAnimation { duration: 500 } }
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: mouse => {
+                                if (popup.activePlayer?.canSeek)
+                                    popup.activePlayer.position = (mouse.x / width) * popup.activePlayer.length
+                            }
+                        }
+                    }
+
+                    Row {
+                        spacing: 6
+
+                        Rectangle {
+                            width: 28; height: 28; radius: 999
+                            color: popup.activePlayer?.shuffle
+                                ? Qt.rgba(Colors.primary.r, Colors.primary.g, Colors.primary.b, 0.25)
+                                : Qt.rgba(Colors.surfaceText.r, Colors.surfaceText.g, Colors.surfaceText.b, 0.08)
+                            visible: popup.activePlayer?.canControl ?? false
+                            Text {
+                                anchors.centerIn: parent
+                                text: "⇄"
+                                color: popup.activePlayer?.shuffle ? Colors.primary : Colors.surfaceText
+                                font.pixelSize: 13
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: { if (popup.activePlayer) popup.activePlayer.shuffle = !popup.activePlayer.shuffle }
+                            }
+                        }
+
+                        Rectangle {
+                            width: 32; height: 32; radius: 999
+                            color: Qt.rgba(Colors.surfaceText.r, Colors.surfaceText.g, Colors.surfaceText.b, 0.08)
+                            visible: popup.activePlayer?.canGoPrevious ?? false
+                            Text {
+                                anchors.centerIn: parent
+                                text: "⏮"
+                                color: Colors.surfaceText
+                                font.pixelSize: 13
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: popup.activePlayer?.previous()
+                            }
+                        }
+
+                        Rectangle {
+                            width: 40; height: 40; radius: 999
+                            color: Colors.primary
+                            Text {
+                                anchors.centerIn: parent
+                                text: popup.activePlayer?.playbackState === MprisPlaybackState.Playing ? "⏸" : "▶"
+                                color: Colors.primaryText
+                                font.pixelSize: 16
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: popup.activePlayer?.togglePlaying()
+                            }
+                        }
+
+                        Rectangle {
+                            width: 32; height: 32; radius: 999
+                            color: Qt.rgba(Colors.surfaceText.r, Colors.surfaceText.g, Colors.surfaceText.b, 0.08)
+                            visible: popup.activePlayer?.canGoNext ?? false
+                            Text {
+                                anchors.centerIn: parent
+                                text: "⏭"
+                                color: Colors.surfaceText
+                                font.pixelSize: 13
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: popup.activePlayer?.next()
+                            }
+                        }
+
+                        Rectangle {
+                            width: 28; height: 28; radius: 999
+                            color: popup.activePlayer?.loopState !== MprisLoopState.None
+                                ? Qt.rgba(Colors.primary.r, Colors.primary.g, Colors.primary.b, 0.25)
+                                : Qt.rgba(Colors.surfaceText.r, Colors.surfaceText.g, Colors.surfaceText.b, 0.08)
+                            visible: popup.activePlayer?.canControl ?? false
+                            Text {
+                                anchors.centerIn: parent
+                                text: popup.activePlayer?.loopState === MprisLoopState.Track ? "🔂" : "🔁"
+                                color: popup.activePlayer?.loopState !== MprisLoopState.None ? Colors.primary : Colors.surfaceText
+                                font.pixelSize: 12
+                            }
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: {
+                                    if (!popup.activePlayer) return
+                                    switch (popup.activePlayer.loopState) {
+                                        case MprisLoopState.None:     popup.activePlayer.loopState = MprisLoopState.Playlist; break
+                                        case MprisLoopState.Playlist: popup.activePlayer.loopState = MprisLoopState.Track; break
+                                        case MprisLoopState.Track:    popup.activePlayer.loopState = MprisLoopState.None; break
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
