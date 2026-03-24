@@ -14,7 +14,7 @@ PopupWindow {
 
     anchor.window: parentWindow
     anchor.rect.x: parentWindow.width - 216
-    anchor.rect.y: parentWindow.height - 8
+    anchor.rect.y: parentWindow.height
 
     property real animProgress: 0
     property real animScale: 0.85
@@ -28,7 +28,6 @@ PopupWindow {
         }
     }
 
-    // ムニュッ：translateとscaleを組み合わせ
     NumberAnimation {
         id: showProgressAnim
         target: powerPopup
@@ -66,16 +65,6 @@ PopupWindow {
         } else {
             powerPopup.visible = true
         }
-    }
-
-    // バーとつながるコネクター
-    Rectangle {
-        anchors.top: parent.top
-        anchors.right: parent.right
-        width: parent.width
-        height: 16
-        color: Qt.rgba(Colors.surface.r, Colors.surface.g, Colors.surface.b, 0.95)
-        opacity: powerPopup.animProgress
     }
 
     Rectangle {
@@ -120,7 +109,6 @@ PopupWindow {
 
                     Behavior on color { ColorAnimation { duration: 120 } }
 
-                    // 左のアイコンエリア
                     Rectangle {
                         anchors.left: parent.left
                         anchors.leftMargin: 10
@@ -137,7 +125,6 @@ PopupWindow {
                         }
                     }
 
-                    // テキスト
                     Column {
                         anchors.left: parent.left
                         anchors.leftMargin: 56

@@ -16,7 +16,7 @@ PopupWindow {
     // バーから生えてくる感じ：上角をバーの角に合わせる
     anchor.window: parentWindow
     anchor.rect.x: parentWindow.width - implicitWidth
-    anchor.rect.y: parentWindow.height - 8
+    anchor.rect.y: parentWindow.height
     implicitWidth: parentWindow.screen.width * 0.25
     implicitHeight: Math.min(innerCol.implicitHeight + 48, parentWindow.screen.height * 0.8)
 
@@ -55,16 +55,6 @@ PopupWindow {
 
     PwObjectTracker {
         objects: [Pipewire.defaultAudioSink]
-    }
-
-    // バーとつながるコネクター部分（上部の角丸なし矩形）
-    Rectangle {
-        anchors.top: parent.top
-        anchors.right: parent.right
-        width: parent.width
-        height: 16
-        color: Qt.rgba(Colors.surface.r, Colors.surface.g, Colors.surface.b, 0.95)
-        opacity: controlCenter.animProgress
     }
 
     Rectangle {
@@ -473,10 +463,8 @@ PopupWindow {
                             MouseArea {
                                 anchors.fill: parent
                                 onClicked: {
-                                    // tracked = false にすることで全通知をdismiss
                                     const notifs = notificationServer.trackedNotifications
                                     const count = notifs.count
-                                    // 逆順でdismiss
                                     for (let i = count - 1; i >= 0; i--) {
                                         const n = notifs.get(i)
                                         if (n) n.tracked = false
