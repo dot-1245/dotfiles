@@ -5,7 +5,6 @@ HYPRLOCK_CONF="$HOME/.config/hypr/hyprlock.conf"
 COLORS_CONF="$HOME/.config/hypr/colors.conf"
 THUMB_DIR="/tmp/wallpaper_thumbs"
 mkdir -p "$THUMB_DIR"
-
 generate_entries() {
   {
     find -L "$WALLPAPER_DIR" -maxdepth 1 -type f \
@@ -28,19 +27,15 @@ generate_entries() {
     fi
   done
 }
-
 SELECTED=$(generate_entries | rofi -dmenu -show-icons -theme ~/.config/rofi/wallpaper.rasi)
 [[ -z "$SELECTED" ]] && exit 0
-
 FULL_PATH="$WALLPAPER_DIR/$SELECTED"
-
 # --- 移植セクション: モノクロ判定ロジック ---
 # 判定対象の画像パスを特定（動画ならサムネイル、画像ならそのまま）
 CHECK_TARGET="$FULL_PATH"
 if [[ "$SELECTED" == Video/* ]]; then
     CHECK_TARGET="$THUMB_DIR/$(basename "$SELECTED").jpg"
 fi
-
 # 彩度の平均を取得してスキームを決定
 SATURATION=$(convert "$CHECK_TARGET" -colorspace HSL -channel S -separate -format "%[fx:mean]" info: 2>/dev/null)
 SCHEME="scheme-vibrant"
@@ -51,7 +46,6 @@ fi
 # matugen適用
 matugen image "$CHECK_TARGET" --type "$SCHEME" --source-color-index 0
 # ------------------------------------------
-
 # matugenの背景色を取得（なければ黒）
 if [[ -f "$COLORS_CONF" ]]; then
     BG_COLOR=$(grep '^\$background' "$COLORS_CONF" | grep -oP '[0-9a-fA-F]{6}' | head -c 6)
@@ -59,7 +53,6 @@ if [[ -f "$COLORS_CONF" ]]; then
 else
     BG_COLOR="000000"
 fi
-
 if [[ "$SELECTED" == Video/* ]]; then
   pkill mpvpaper 2>/dev/null
   swww clear "${BG_COLOR}" 2>/dev/null
@@ -68,12 +61,10 @@ else
   pkill mpvpaper 2>/dev/null
   swww img "$FULL_PATH" --transition-type fade
 fi
-
 # 設定の反映
 if [[ -f "$HYPRLOCK_CONF" ]]; then
   sed -i "s|path = .*|path = $FULL_PATH|" "$HYPRLOCK_CONF"
 fi
-
 sleep 0.5
 hyprctl reload
 killall -SIGUSR1 kitty 

@@ -40,12 +40,14 @@ alias sptui="sh $HOME/.config/scripts/spotify-tui.sh"
 alias yttui="sh $HOME/.config/scripts/yttui.sh"
 alias daily="yap --editor inbuilt /mnt/hdd/daily"
 alias blackpaper="swww clear 000000"
-alias requickshell="killall quickshell 2>/dev/null; quickshell & disown"
+alias requickshell="killall quickshell > /dev/null 2>&1; sleep 0.5; quickshell > /dev/null 2>&1 & disown"
 alias mpvmatugen="$HOME/.config/scripts/matugen-mpvpaper.sh >/dev/null 2>&1 & disown"
 alias ff="fastfetch -c os"
 alias matugencolors='~/.config/scripts/show-colors.sh'
 alias blackcolors='matugen color hex ffffff -t scheme-monochrome'
 alias cl='clear'
+alias reime="pkill fcitx5 > /dev/null 2>&1; sleep 0.5; fcitx5 > /dev/null 2>&1 & disown"
+
 eval "$(starship init zsh)"
 
 fastfetch --config os
