@@ -55,11 +55,11 @@ else
 fi
 if [[ "$SELECTED" == Video/* ]]; then
   pkill mpvpaper 2>/dev/null
-  swww clear "${BG_COLOR}" 2>/dev/null
+  awww clear "${BG_COLOR}" 2>/dev/null
   mpvpaper -o "loop" '*' "$FULL_PATH" &
 else
   pkill mpvpaper 2>/dev/null
-  swww img "$FULL_PATH" --transition-type fade
+  awww img "$FULL_PATH" --transition-type fade
 fi
 # 設定の反映
 if [[ -f "$HYPRLOCK_CONF" ]]; then
