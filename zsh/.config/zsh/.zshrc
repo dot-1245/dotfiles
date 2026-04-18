@@ -48,6 +48,7 @@ alias matugencolors='~/.config/scripts/show-colors.sh'
 alias blackcolors='matugen color hex ffffff -t scheme-monochrome'
 alias cl='clear'
 alias reime="pkill fcitx5 > /dev/null 2>&1; sleep 0.5; fcitx5 > /dev/null 2>&1 & disown"
+alias mdstart="sh ~/.config/scripts/musicdashstart.sh"
 
 eval "$(starship init zsh)"
 
