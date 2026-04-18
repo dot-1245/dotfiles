@@ -120,6 +120,25 @@ ShellRoot {
                 parentWindow: panel
             }
 
+            // ── アプリランチャー ──
+            AppLauncher {
+                id: launcher
+                parentWindow: panel
+            }
+
+            // ── 壁紙セレクター ──
+            WallpaperSelector {
+                id: wallpaperSelector
+                parentWindow: panel
+            }
+
+            // Alt+Space でランチャートグル
+            Shortcut {
+                sequence: "Alt+Space"
+                context: Qt.ApplicationShortcut
+                onActivated: launcher.toggleVisible()
+            }
+
             Rectangle {
                 id: bar
                 anchors.fill: parent
@@ -212,7 +231,7 @@ ShellRoot {
                         horizontalAlignment: Text.AlignHCenter
                     }
 
-                    // 右: 音楽 + 通知バッジ + 時計 + 電源
+                    // 右: 音楽 + 通知バッジ + 時計 + 壁紙 + 電源
                     Row {
                         anchors.right: parent.right
                         anchors.verticalCenter: parent.verticalCenter
@@ -233,8 +252,7 @@ ShellRoot {
 
                         // 通知バッジ
                         Item {
-                            width: 20
-                            height: 20
+                            width: 20; height: 20
                             anchors.verticalCenter: parent.verticalCenter
 
                             Text {
@@ -247,9 +265,7 @@ ShellRoot {
                             Rectangle {
                                 anchors.right: parent.right
                                 anchors.top: parent.top
-                                width: 14
-                                height: 14
-                                radius: 999
+                                width: 14; height: 14; radius: 999
                                 color: Colors.errorColor
                                 visible: notifServer.trackedNotifications.count > 0 && !silentMode
 
@@ -257,14 +273,12 @@ ShellRoot {
                                     anchors.centerIn: parent
                                     text: notifServer.trackedNotifications.count
                                     color: Colors.primaryText
-                                    font.pixelSize: 9
-                                    font.weight: Font.Bold
+                                    font.pixelSize: 9; font.weight: Font.Bold
                                 }
                             }
 
                             MouseArea {
-                                anchors.fill: parent
-                                anchors.margins: -4
+                                anchors.fill: parent; anchors.margins: -4
                                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                                 onClicked: mouse => {
                                     if (mouse.button === Qt.RightButton) {
@@ -288,10 +302,22 @@ ShellRoot {
                             }
 
                             Timer {
-                                interval: 1000
-                                running: true
-                                repeat: true
+                                interval: 1000; running: true; repeat: true
                                 onTriggered: clockText.text = Qt.formatDateTime(new Date(), "hh:mm")
+                            }
+                        }
+
+                        // 壁紙ボタン
+                        Text {
+                            text: "🖼"
+                            font.pixelSize: 14
+                            color: textColor(bar.color)
+                            opacity: wallpaperSelector.visible ? 1.0 : 0.7
+                            Behavior on opacity { NumberAnimation { duration: 150 } }
+
+                            MouseArea {
+                                anchors.fill: parent; anchors.margins: -8
+                                onClicked: wallpaperSelector.toggleVisible()
                             }
                         }
 
@@ -301,8 +327,7 @@ ShellRoot {
                             color: textColor(bar.color)
                             font.pixelSize: 16
                             MouseArea {
-                                anchors.fill: parent
-                                anchors.margins: -8
+                                anchors.fill: parent; anchors.margins: -8
                                 onClicked: powerPopup.toggleVisible()
                             }
                         }
