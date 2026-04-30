@@ -66,8 +66,8 @@ apply_matugen() {
     # killall -SIGUSR2 waybar 2>/dev/null
     hyprctl reload
     swaync-client --reload-config 2>/dev/null
-    pkill -USR1 kitty 2>/dev/null
-    pkill -SIGUSR1 cava 2>/dev/null
+    killall -SIGUSR1 kitty 2>/dev/null
+    killall -SIGUSR1 cava 2>/dev/null
 	spicetify apply
 }
 echo "👀 mpvpaper監視開始..."

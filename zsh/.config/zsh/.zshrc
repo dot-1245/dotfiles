@@ -35,7 +35,6 @@ alias rekitty="source $zshconf"
 alias rewaybar="killall waybar 2>/dev/null; waybar > /dev/null 2>&1 & disown"
 alias musictuiold="~/.config/scripts/show_music.sh"
 alias musictui="$HOME/.config/bin/go-music-tui"
-alias clocktui="tty-clock -sc"
 alias cbonsaitui="cbonsai -lit 0.01"
 alias sptui="sh $HOME/.config/scripts/spotify-tui.sh"
 alias yttui="sh $HOME/.config/scripts/yttui.sh"
@@ -49,7 +48,10 @@ alias blackcolors='matugen color hex ffffff -t scheme-monochrome'
 alias cl='clear'
 alias reime="pkill fcitx5 > /dev/null 2>&1; sleep 0.5; fcitx5 > /dev/null 2>&1 & disown"
 alias mdstart="sh ~/.config/scripts/musicdashstart.sh"
+alias clocktui="tty-clock -scb"
 
 eval "$(starship init zsh)"
 
-fastfetch --config os
+# fastfetch --config os
+
+export PATH=$PATH:/home/dot1245/.spicetify
