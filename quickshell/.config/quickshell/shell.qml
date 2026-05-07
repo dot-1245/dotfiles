@@ -11,46 +11,10 @@ ShellRoot {
     property var urgentWorkspaces: []
     property bool silentMode: false
 
-    function luminance(color) {
-        return 0.299 * color.r + 0.587 * color.g + 0.114 * color.b
-    }
-    function textColor(bgColor) {
-        return luminance(bgColor) > 0.5 ? "#000000" : "#ffffff"
-    }
-
-    // 通知サーバー
     NotificationServer {
         id: notifServer
-        actionsSupported: true
-        imageSupported: true
-        bodySupported: true
-        keepOnReload: true
-
-        onNotification: notif => {
-            notif.tracked = true
-        }
-    }
-
-    Process {
-        id: getUrgentWs
-        property string addr: ""
-        command: ["hyprctl", "clients", "-j"]
-
-        stdout: SplitParser {
-            splitMarker: ""
-            onRead: data => {
-                try {
-                    const clients = JSON.parse(data)
-                    const client = clients.find(c => c.address.endsWith(getUrgentWs.addr))
-                    if (client) {
-                        const wsId = client.workspace.id
-                        if (!urgentWorkspaces.includes(wsId)) {
-                            urgentWorkspaces = [...urgentWorkspaces, wsId]
-                        }
-                    }
-                } catch(e) {}
-            }
-        }
+        actionsSupported: true; imageSupported: true; bodySupported: true; keepOnReload: true
+        onNotification: notif => { notif.tracked = true }
     }
 
     Connections {
@@ -59,11 +23,6 @@ ShellRoot {
             if (event.name === "activewindow") {
                 const parts = event.parse(2)
                 windowTitle = parts[1] ?? ""
-                urgentWorkspaces = urgentWorkspaces.filter(id => id !== Hyprland.focusedWorkspace?.id)
-            }
-            if (event.name === "urgent") {
-                getUrgentWs.addr = event.parse(1)[0]
-                getUrgentWs.running = true
             }
         }
     }
@@ -77,263 +36,151 @@ ShellRoot {
             screen: modelData
             anchors.top: true
             implicitWidth: screen.width * 0.99
-            implicitHeight: 36
+            implicitHeight: 40
             color: "transparent"
             margins.top: 8
-
-            // トーストオーバーレイ（スクリーンごと）
-            ToastOverlay {
-                screen: panel.screen
-                notificationServer: notifServer
-                silentMode: silentMode
-            }
-
-            ControlCenter {
-                id: controlCenter
-                visible: false
-                parentWindow: panel
-                notificationServer: notifServer
-
-                NumberAnimation {
-                    id: hideAnim
-                    target: controlCenter
-                    property: "animProgress"
-                    from: 1; to: 0
-                    duration: 180
-                    easing.type: Easing.InBack
-                    easing.overshoot: 0.5
-                    onFinished: controlCenter.visible = false
-                }
-
-                function toggleVisible() {
-                    if (controlCenter.visible) {
-                        hideAnim.start()
-                    } else {
-                        controlCenter.visible = true
-                    }
-                }
-            }
-
-            PowerMenu {
-                id: powerPopup
-                visible: false
-                parentWindow: panel
-            }
-
-            // ── アプリランチャー ──
-            AppLauncher {
-                id: launcher
-                parentWindow: panel
-            }
-
-            // ── 壁紙セレクター ──
-            WallpaperSelector {
-                id: wallpaperSelector
-                parentWindow: panel
-            }
-
-            // Alt+Space でランチャートグル
-            Shortcut {
-                sequence: "Alt+Space"
-                context: Qt.ApplicationShortcut
-                onActivated: launcher.toggleVisible()
-            }
 
             Rectangle {
                 id: bar
                 anchors.fill: parent
-                radius: 999
-                color: Qt.rgba(
-                    Colors.surface.r,
-                    Colors.surface.g,
-                    Colors.surface.b,
-                    0.85
-                )
+                radius: 16
+                color: Qt.rgba(Colors.surface.r, Colors.surface.g, Colors.surface.b, 0.85)
 
-                Item {
-                    anchors.fill: parent
-                    anchors.leftMargin: 12
-                    anchors.rightMargin: 12
-
-                    // 左: ワークスペース
-                    Row {
-                        anchors.left: parent.left
-                        anchors.verticalCenter: parent.verticalCenter
-                        spacing: 4
-
-                        Repeater {
-                            model: Hyprland.workspaces
-
-                            Item {
-                                implicitHeight: 24
-                                implicitWidth: wsIndicator.implicitWidth
-                                anchors.verticalCenter: parent?.verticalCenter
-
-                                property bool isActive: modelData.id === Hyprland.focusedWorkspace?.id
-                                property bool isUrgent: urgentWorkspaces.includes(modelData.id)
-
-                                Rectangle {
-                                    id: wsIndicator
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    implicitHeight: 24
-                                    implicitWidth: isActive ? 36 : 24
-                                    radius: 999
-
-                                    color: isUrgent
-                                        ? Colors.errorColor
-                                        : isActive
-                                            ? Colors.primary
-                                            : Qt.rgba(Colors.surfaceText.r, Colors.surfaceText.g, Colors.surfaceText.b, 0.15)
-
-                                    Behavior on implicitWidth {
-                                        NumberAnimation {
-                                            duration: 300
-                                            easing.type: Easing.OutBack
-                                            easing.overshoot: 0.5
-                                        }
-                                    }
-
-                                    Behavior on color {
-                                        ColorAnimation { duration: 200 }
-                                    }
-
-                                    Text {
-                                        anchors.centerIn: parent
-                                        text: modelData.id
-                                        color: isActive || isUrgent
-                                            ? (luminance(wsIndicator.color) > 0.5 ? "#000000" : "#ffffff")
-                                            : Qt.rgba(Colors.surfaceText.r, Colors.surfaceText.g, Colors.surfaceText.b, 0.7)
-                                        font.pixelSize: 11
-                                        font.weight: isActive ? Font.Medium : Font.Normal
-
-                                        Behavior on color {
-                                            ColorAnimation { duration: 200 }
-                                        }
-                                    }
-
-                                    MouseArea {
-                                        anchors.fill: parent
-                                        onClicked: modelData.activate()
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // 中央: ウィンドウタイトル
-                    Text {
-                        anchors.centerIn: parent
-                        width: parent.width * 0.4
-                        text: windowTitle
-                        color: textColor(bar.color)
-                        font.pixelSize: 13
-                        elide: Text.ElideRight
-                        horizontalAlignment: Text.AlignHCenter
-                    }
-
-                    // 右: 音楽 + 通知バッジ + 時計 + 壁紙 + 電源
-                    Row {
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        spacing: 12
-
-                        Repeater {
-                            model: Mpris.players
+                // --- [左側] ワークスペース ---
+                Row {
+                    id: leftArea
+                    anchors.left: parent.left
+                    anchors.leftMargin: 16
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 6
+                    Repeater {
+                        model: Hyprland.workspaces
+                        delegate: Rectangle {
+                            width: modelData.id === Hyprland.focusedWorkspace?.id ? 38 : 26
+                            height: 26; radius: 13
+                            color: modelData.id === Hyprland.focusedWorkspace?.id ? Colors.primary : Qt.rgba(Colors.surfaceText.r, Colors.surfaceText.g, Colors.surfaceText.b, 0.15)
                             Text {
-                                text: "🎵 " + modelData.trackTitle
-                                color: textColor(bar.color)
-                                font.pixelSize: 13
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: controlCenter.toggleVisible()
-                                }
+                                anchors.centerIn: parent; text: modelData.id
+                                color: Colors.surfaceText; font.pixelSize: 11
                             }
-                        }
-
-                        // 通知バッジ
-                        Item {
-                            width: 20; height: 20
-                            anchors.verticalCenter: parent.verticalCenter
-
-                            Text {
-                                anchors.centerIn: parent
-                                text: silentMode ? "🔕" : "🔔"
-                                font.pixelSize: 13
-                                opacity: notifServer.trackedNotifications.count > 0 || silentMode ? 1.0 : 0.4
-                            }
-
-                            Rectangle {
-                                anchors.right: parent.right
-                                anchors.top: parent.top
-                                width: 14; height: 14; radius: 999
-                                color: Colors.errorColor
-                                visible: notifServer.trackedNotifications.count > 0 && !silentMode
-
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: notifServer.trackedNotifications.count
-                                    color: Colors.primaryText
-                                    font.pixelSize: 9; font.weight: Font.Bold
-                                }
-                            }
-
-                            MouseArea {
-                                anchors.fill: parent; anchors.margins: -4
-                                acceptedButtons: Qt.LeftButton | Qt.RightButton
-                                onClicked: mouse => {
-                                    if (mouse.button === Qt.RightButton) {
-                                        silentMode = !silentMode
-                                    } else {
-                                        controlCenter.toggleVisible()
-                                    }
-                                }
-                            }
-                        }
-
-                        // 時計
-                        Text {
-                            id: clockText
-                            text: Qt.formatDateTime(new Date(), "hh:mm")
-                            color: textColor(bar.color)
-                            font.pixelSize: 13
-                            MouseArea {
-                                anchors.fill: parent
-                                onClicked: controlCenter.toggleVisible()
-                            }
-
-                            Timer {
-                                interval: 1000; running: true; repeat: true
-                                onTriggered: clockText.text = Qt.formatDateTime(new Date(), "hh:mm")
-                            }
-                        }
-
-                        // 壁紙ボタン
-                        Text {
-                            text: "🖼"
-                            font.pixelSize: 14
-                            color: textColor(bar.color)
-                            opacity: wallpaperSelector.visible ? 1.0 : 0.7
-                            Behavior on opacity { NumberAnimation { duration: 150 } }
-
-                            MouseArea {
-                                anchors.fill: parent; anchors.margins: -8
-                                onClicked: wallpaperSelector.toggleVisible()
-                            }
-                        }
-
-                        // 電源ボタン
-                        Text {
-                            text: "⏻"
-                            color: textColor(bar.color)
-                            font.pixelSize: 16
-                            MouseArea {
-                                anchors.fill: parent; anchors.margins: -8
-                                onClicked: powerPopup.toggleVisible()
-                            }
+                            MouseArea { anchors.fill: parent; onClicked: modelData.activate() }
                         }
                     }
                 }
+
+                // --- [右側] 音楽・時計・ボタン (右端に固定) ---
+                Row {
+                    id: rightArea
+                    anchors.right: parent.right
+                    anchors.rightMargin: 16
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 12
+
+                    // MPRIS (バー上の表示ロジックをControlCenterに統合)
+                    Repeater {
+                        model: Mpris.players
+                        delegate: Rectangle {
+                            // 再生中のもの、または最初のプレイヤーを表示
+                            visible: modelData.playbackState === MprisPlaybackState.Playing || index === 0
+                            width: visible ? 180 : 0
+                            height: 32; radius: 10
+                            color: Qt.rgba(Colors.primary.r, Colors.primary.g, Colors.primary.b, 0.15)
+                            clip: true
+
+                            Row {
+                                anchors.fill: parent; anchors.margins: 4; spacing: 8
+                                
+                                Rectangle {
+                                    width: 24; height: 24; radius: 5
+                                    color: Qt.rgba(Colors.primary.r, Colors.primary.g, Colors.primary.b, 0.2)
+                                    clip: true
+                                    Image {
+                                        id: barArtImg
+                                        anchors.fill: parent
+                                        source: modelData.trackArtUrl ?? ""
+                                        fillMode: Image.PreserveAspectCrop
+                                        asynchronous: true
+                                        visible: source !== ""
+                                    }
+                                    Text {
+                                        anchors.centerIn: parent; text: "♪"
+                                        font.pixelSize: 12; color: Colors.primary
+                                        visible: !barArtImg.visible
+                                    }
+                                }
+
+                                Column {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    Text { 
+                                        text: modelData.trackTitle || "Music"
+                                        font.pixelSize: 9; font.weight: Font.Bold; color: Colors.surfaceText
+                                        width: 130; elide: Text.ElideRight 
+                                    }
+                                    Text { 
+                                        text: modelData.trackArtists || "Unknown"
+                                        font.pixelSize: 8; opacity: 0.7; color: Colors.surfaceText
+                                        width: 130; elide: Text.ElideRight 
+                                    }
+                                }
+                            }
+
+                            Rectangle {
+                                anchors.bottom: parent.bottom; height: 2; color: Colors.primary
+                                width: parent.width * (modelData.length > 0 ? (modelData.position / modelData.length) : 0)
+                            }
+
+                            MouseArea { 
+                                anchors.fill: parent
+                                onClicked: controlCenter.toggleVisible() 
+                            }
+                        }
+                    }
+
+                    // 時計・通知・電源
+                    Row {
+                        spacing: 14; anchors.verticalCenter: parent.verticalCenter
+                        Text { text: silentMode ? "🔕" : "🔔"; font.pixelSize: 14; color: Colors.surfaceText; MouseArea { anchors.fill: parent; onClicked: controlCenter.toggleVisible() } }
+                        Text { text: Qt.formatDateTime(new Date(), "hh:mm"); color: Colors.surfaceText; font.pixelSize: 13; MouseArea { anchors.fill: parent; onClicked: controlCenter.toggleVisible() } }
+                        Text { text: "⏻"; font.pixelSize: 16; color: Colors.surfaceText; MouseArea { anchors.fill: parent; onClicked: powerPopup.toggleVisible() } }
+                    }
+                }
+
+                // --- [中央] アイコンとタイトル ---
+                Row {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 10
+                    // 左右のエリアを侵害しないよう計算
+                    width: Math.min(bar.width - (leftArea.width + rightArea.width + 100), 500)
+                    clip: true
+
+                    Image {
+                        width: 20; height: 20
+                        anchors.verticalCenter: parent.verticalCenter
+                        source: Hyprland.focusedClient?.class ? "image://icon/" + Hyprland.focusedClient.class : ""
+                        fillMode: Image.PreserveAspectFit
+                        onStatusChanged: if (status === Image.Error) source = "image://icon/application-x-executable" 
+                    }
+
+                    Text {
+                        text: windowTitle
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: Colors.surfaceText; font.pixelSize: 13; font.weight: Font.Medium
+                        elide: Text.ElideRight
+                        width: parent.width - 30
+                    }
+                }
             }
+
+            // ポップアップコンポーネント
+            ControlCenter { 
+                id: controlCenter; visible: false; parentWindow: panel; notificationServer: notifServer
+                function toggleVisible() { this.visible = !this.visible }
+            }
+            PowerMenu { id: powerPopup; visible: false; parentWindow: panel }
+            AppLauncher { id: launcher; parentWindow: panel }
+            WallpaperSelector { id: wallpaperSelector; parentWindow: panel }
+            ToastOverlay { screen: panel.screen; notificationServer: notifServer; silentMode: silentMode }
         }
     }
 }
